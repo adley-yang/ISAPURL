@@ -31,7 +31,7 @@ resolvers ++= Seq(
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
-mainClass in assembly := Some("ReadKafka")
+mainClass in assembly := Some("com.iflytek.url.processUrl")
 
 assemblyOption in packageDependency ~= {
   _.copy(appendContentHash = true)
@@ -48,12 +48,8 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
     x.data.getName.matches(".*minlog.*")||
     x.data.getName.matches(".*commons-beanutils.*")||
     x.data.getName.matches(".*commons-logging.*")||
-    x.data.getName.matches(".*akka-actor_2.10-2.2.3-shaded-protobuf.*")||
-    x.data.getName.matches(".*akka-actor_2.10-2.2.1.*")||
     x.data.getName.matches(".*jcl-over-slf4j.*")||
-    x.data.getName.matches(".*slf4j-api-1.7.5.*")||
-    x.data.getName.matches(".*hadoop-yarn-common-2.3.0.*")||
-    x.data.getName.matches(".*hadoop-yarn-api-2.3.0.*")
+    x.data.getName.matches(".*slf4j-api-1.7.5.*")
   }
 }
     

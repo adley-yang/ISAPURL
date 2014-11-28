@@ -89,6 +89,4 @@ object Constants {
     mongoClient.close()
     tmp
   }
-
-
 }
