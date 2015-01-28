@@ -22,7 +22,8 @@ libraryDependencies ++= Seq(
   "org.mongodb" % "casbah_2.10" % "2.7.3",
   "com.novus" %% "salat" % "1.9.9",
   "mysql" % "mysql-connector-java" % "5.1.33",
-  "org.scalaj" %% "scalaj-http" % "0.3.16"
+  "org.scalaj" %% "scalaj-http" % "0.3.16",
+  "org.apache.poi" % "poi" % "3.11"
 )
 
 resolvers ++= Seq(
@@ -49,6 +50,7 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
     x.data.getName.matches(".*commons-beanutils.*")||
     x.data.getName.matches(".*commons-logging.*")||
     x.data.getName.matches(".*jcl-over-slf4j.*")||
+    x.data.getName.matches(".*slf4j-api-1.7.2.*")||
     x.data.getName.matches(".*slf4j-api-1.7.5.*")
   }
 }

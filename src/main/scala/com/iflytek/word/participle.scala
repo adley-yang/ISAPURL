@@ -34,11 +34,10 @@ object participle extends App {
   val info_all = col_info_sou.find(status) toList
   val category_all = col_category.find() toList
 
-  val colNames = db.getCollectionNames().filterNot(x => x.startsWith("_test"))
-  try {
+  //val colNames = db.getCollectionNames().filterNot(x => x.startsWith("_test"))
+  val colNames = List("coolRinger","gameApp","selfMusic","himalayan","riddle","coldJoke","constellationDetail","baozouCartoon","internet","youkuFilm","catEyeFilm","zhiquWeather")
+    try {
     for (colName <- colNames) {
-      println(colName)
-
       val category = info_all.find(x => x.get("sourceName").toString.equals(colName)) match {
         case Some(result) => result.get("category")
         case None => None
@@ -61,12 +60,13 @@ object participle extends App {
                 case result: JValue =>
                   val itemName = result.extract[String]
                   val allDocs = db(colName).find()
-                  println("itemName:" + itemName)
                   for (doc <- allDocs) {
                     val value = doc.get(itemName) match {
                       case result: String =>
-                        val ovs_result = ovs(result toString)
-                        isap_participle.println(category + "\t" + colName + "\t" + result + "\t" + ovs_result)
+                        if (result.length > 0) {
+                          val ovs_result = ovs(result toString)
+                          isap_participle.println(category + "\t" + colName + "\t" + result + "\t" + ovs_result)
+                        }
                       case _ =>
                     }
                   }
@@ -83,10 +83,11 @@ object participle extends App {
   }
 
   def ovs(source: String): String = {
-    try{
-    iflyws.getTokenString(source)
-    }catch {
-      case e : Exception => ""
+    try {
+      iflyws.getTokenString(source)
+    } catch {
+      case e: Exception => println("原始串"+source+","+e)
+        ""
     }
   }
 
