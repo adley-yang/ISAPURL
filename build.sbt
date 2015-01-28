@@ -32,7 +32,7 @@ resolvers ++= Seq(
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
-mainClass in assembly := Some("com.iflytek.url.processUrl")
+mainClass in assembly := Some("com.iflytek.url.produceUrl")
 
 assemblyOption in packageDependency ~= {
   _.copy(appendContentHash = true)
@@ -51,6 +51,7 @@ excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
     x.data.getName.matches(".*commons-logging.*")||
     x.data.getName.matches(".*jcl-over-slf4j.*")||
     x.data.getName.matches(".*slf4j-api-1.7.2.*")||
+    x.data.getName.matches(".*commons-codec-1.9.*")||
     x.data.getName.matches(".*slf4j-api-1.7.5.*")
   }
 }

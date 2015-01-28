@@ -20,6 +20,11 @@ import scala.collection._
  */
 object produceUrl extends App {
 
+  if (args.length != 1) {
+    println("配置：source_file")
+    System.exit(0)
+  }
+
   implicit val formats = DefaultFormats
 
   val services = Set("takeout", "parenting", "easyMoment", "homeInfo", "lifeTips", "constellationMatching", "mimi", "englishWords", "travelCity", "insurance", "openClass", "tingshu", "clothing", "children", "restaurant", "magazine", "train", "fund", "travelX", "danceTeaching", "composition", "smartName", "hotel", "drugstore", "zodiacFortune", "qiubai", "secondaryTransaction", "english", "exam", "fm")
@@ -28,9 +33,10 @@ object produceUrl extends App {
 
   val onlineHead = "http://kchf.openspeech.cn/service/iss?ver=2.0&method=query&rt=semantic|data|webPage&appid=kctestisap01&usr_id=kctestisap01&addr.city=%E5%90%88%E8%82%A5%E5%B8%82&addr.pos=%E5%AE%89%E5%BE%BD%E7%9C%81%E5%90%88%E8%82%A5%E5%B8%82%E8%82%A5%E8%A5%BF%E5%8E%BF%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF666%E5%8F%B7&addr.street=%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF&flag=test&text="
 
-  val excelMap: mutable.HashMap[String, mutable.Buffer[(String, String, String, String, String, String, String, String)]] = mutable.HashMap.empty[String, mutable.Buffer[(String, String, String, String, String, String, String, String)]]
+  val excelMap: mutable.HashMap[String, mutable.Buffer[(String, String, String, String, String, String, String, String, String, String)]] = mutable.HashMap.empty[String, mutable.Buffer[(String, String, String, String, String, String, String, String, String, String)]]
 
-  val sFile = Source.fromFile("D:\\isap.txt", "UTF-8").getLines()
+  //val sFile = Source.fromFile("D:\\isap_tmp.txt", "UTF-8").getLines()
+  val sFile = Source.fromFile(args(0), "UTF-8").getLines()
 
   //创建excel工作簿
   val wb = new HSSFWorkbook()
@@ -86,7 +92,16 @@ object produceUrl extends App {
     } catch {
       case e: Exception => ""
     }
-    (service, semantic)
+
+    val data: String = try {
+      compact(render(parse(json) \ "data" \ "result"))
+    } catch {
+      case e: Exception => ""
+    }
+
+    val resultFlag = if (data.length > 0) "true" else "false"
+
+    (service, semantic, resultFlag)
   }
 
   for (sLine <- sFile) {
@@ -97,8 +112,8 @@ object produceUrl extends App {
 
       if (services.contains(service)) {
 
-        val testUrl = testHead + ectext
-        val onlineUrl = onlineHead + ectext
+        val testUrl = testHead + ectext + "&category=" + service
+        val onlineUrl = onlineHead + ectext + "&category=" + service
         val content = text + "\t" + service + "\t" + testUrl + "\t" + onlineUrl + "\n"
 
         var onlinetup = getService(onlineUrl)
@@ -111,6 +126,7 @@ object produceUrl extends App {
         }
         val onlineService = onlinetup._1
         val onlineSemantic = onlinetup._2
+        val onlineResult = onlinetup._3
 
 
         var testtup = getService(testUrl)
@@ -123,8 +139,9 @@ object produceUrl extends App {
         }
         val testService = testtup._1
         val testSemantic = testtup._2
+        val testResult = testtup._3
 
-        val temptup = (text, service, onlineService, testService, onlineSemantic, testSemantic, onlineUrl, testUrl)
+        val temptup = (text, service, onlineService, testService, onlineResult, testResult, onlineSemantic, testSemantic, onlineUrl, testUrl)
         excelMap.get(service) match {
           case Some(result) =>
             result += temptup
@@ -166,8 +183,10 @@ object produceUrl extends App {
     sheet.setColumnWidth(3, 3500)
     sheet.setColumnWidth(4, 4000)
     sheet.setColumnWidth(5, 3500)
-    sheet.setColumnWidth(6, 9500)
-    sheet.setColumnWidth(7, 9500)
+    sheet.setColumnWidth(6, 3500)
+    sheet.setColumnWidth(7, 3500)
+    sheet.setColumnWidth(8, 9500)
+    sheet.setColumnWidth(9, 9500)
 
 
     //Row 行
@@ -187,13 +206,15 @@ object produceUrl extends App {
     row.createCell(1).setCellValue("期望业务")
     row.createCell(2).setCellValue("线上环境业务")
     row.createCell(3).setCellValue("测试环境业务")
-    row.createCell(4).setCellValue("线上语义")
-    row.createCell(5).setCellValue("测试语义")
-    row.createCell(6).setCellValue("线上URL")
-    row.createCell(7).setCellValue("测试URL")
+    row.createCell(4).setCellValue("线上是否有数据")
+    row.createCell(5).setCellValue("测试是否有数据")
+    row.createCell(6).setCellValue("线上语义")
+    row.createCell(7).setCellValue("测试语义")
+    row.createCell(8).setCellValue("线上URL")
+    row.createCell(9).setCellValue("测试URL")
 
     for (i <- 0 until size) {
-      val flag = if(v(i)._2.equals(v(i)._3)&&v(i)._2.equals(v(i)._4)&&v(i)._3.equals(v(i)._4)) false else true
+      val flag = if (v(i)._2.equals(v(i)._3) && v(i)._2.equals(v(i)._4) && v(i)._3.equals(v(i)._4)) false else true
       val row = sheet.createRow(i + 1)
       val cell0 = row.createCell(0)
       cell0.setCellValue(v(i)._1)
@@ -211,8 +232,12 @@ object produceUrl extends App {
       cell6.setCellValue(v(i)._7)
       val cell7 = row.createCell(7)
       cell7.setCellValue(v(i)._8)
+      val cell8 = row.createCell(8)
+      cell8.setCellValue(v(i)._9)
+      val cell9 = row.createCell(9)
+      cell9.setCellValue(v(i)._10)
 
-      if(flag) {
+      if (flag) {
         cell1.setCellStyle(style)
         cell2.setCellStyle(style)
         cell3.setCellStyle(style)
@@ -221,7 +246,7 @@ object produceUrl extends App {
   }
 
   //创建一个文件 命名为workbook.xls
-  val fileOut = new FileOutputStream("业务测试结果.xls")
+  val fileOut = new FileOutputStream("业务测试结果-new.xls")
   // 把上面创建的工作簿输出到文件中
   wb.write(fileOut)
   //关闭输出流
