@@ -149,7 +149,7 @@ object produceUrl extends App {
           case None => excelMap += (service -> mutable.Buffer(temptup))
         }
 
-
+        println(service+"---"+text)
 
 
         /*if (onlineService.equals(service) && testService.equals(service)) {
