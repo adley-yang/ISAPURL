@@ -31,6 +31,8 @@ object produceUrl extends App {
 
   val testHead = "http://kcloudtest.iflytek.com/service/iss?ver=2.0&method=query&rt=semantic|data|webPage&appid=kctestisap01&usr_id=kctestisap01&addr.city=%E5%90%88%E8%82%A5%E5%B8%82&addr.pos=%E5%AE%89%E5%BE%BD%E7%9C%81%E5%90%88%E8%82%A5%E5%B8%82%E8%82%A5%E8%A5%BF%E5%8E%BF%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF666%E5%8F%B7&addr.street=%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF&text="
 
+  //val testHead = "http://kchfpre.openspeech.cn/service/iss?ver=2.0&method=query&rt=semantic|data|webPage&appid=kctestisap01&usr_id=kctestisap01&addr.city=%E5%90%88%E8%82%A5%E5%B8%82&addr.pos=%E5%AE%89%E5%BE%BD%E7%9C%81%E5%90%88%E8%82%A5%E5%B8%82%E8%82%A5%E8%A5%BF%E5%8E%BF%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF666%E5%8F%B7&addr.street=%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF&text="
+
   val onlineHead = "http://kchf.openspeech.cn/service/iss?ver=2.0&method=query&rt=semantic|data|webPage&appid=kctestisap01&usr_id=kctestisap01&addr.city=%E5%90%88%E8%82%A5%E5%B8%82&addr.pos=%E5%AE%89%E5%BE%BD%E7%9C%81%E5%90%88%E8%82%A5%E5%B8%82%E8%82%A5%E8%A5%BF%E5%8E%BF%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF666%E5%8F%B7&addr.street=%E6%9C%9B%E6%B1%9F%E8%A5%BF%E8%B7%AF&flag=test&text="
 
   val excelMap: mutable.HashMap[String, mutable.Buffer[(String, String, String, String, String, String, String, String, String, String)]] = mutable.HashMap.empty[String, mutable.Buffer[(String, String, String, String, String, String, String, String, String, String)]]
@@ -205,13 +207,17 @@ object produceUrl extends App {
     row.createCell(0).setCellValue("问句")
     row.createCell(1).setCellValue("期望业务")
     row.createCell(2).setCellValue("线上环境业务")
-    row.createCell(3).setCellValue("测试环境业务")
+    //row.createCell(3).setCellValue("测试环境业务")
+    row.createCell(3).setCellValue("准上线环境业务")
     row.createCell(4).setCellValue("线上是否有数据")
-    row.createCell(5).setCellValue("测试是否有数据")
+    //row.createCell(5).setCellValue("测试是否有数据")
+    row.createCell(5).setCellValue("准上线是否有数据")
     row.createCell(6).setCellValue("线上语义")
-    row.createCell(7).setCellValue("测试语义")
+    //row.createCell(7).setCellValue("测试语义")
+    row.createCell(7).setCellValue("准上线语义")
     row.createCell(8).setCellValue("线上URL")
-    row.createCell(9).setCellValue("测试URL")
+    //row.createCell(9).setCellValue("测试URL")
+    row.createCell(9).setCellValue("准上线URL")
 
     for (i <- 0 until size) {
       val flag = if (v(i)._2.equals(v(i)._3) && v(i)._2.equals(v(i)._4) && v(i)._3.equals(v(i)._4)) false else true
